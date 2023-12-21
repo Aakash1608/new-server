@@ -29,16 +29,17 @@ class FileViewset(ModelViewSet):
 
             # os.mknod(f'/data/{username}/')
             path = pathlib.Path().resolve()
-            destination = open(path + f'/data/{username}/' + file.name, 'w')
+            destination = open(os.path.join(f"C:User/data/{username}/", file.name), 'wb+')
             for chunk in file.chunks():
                 destination.write(chunk)
             destination.close()
-            file_path = '/data/{username}/{file.name}'
+            file_path = os.path.join(f"C:User/data/{username}/", file.name)
             data = {
                 "file_path": file_path,
-                "file_name": file_name
+                "file_name": file_name,
+                "user": userInstance.id
             }
-            serializer = FileSerializer(user=userInstance, data=data)
+            serializer = FileSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
 
@@ -47,9 +48,13 @@ class FileViewset(ModelViewSet):
         except: 
             path = pathlib.Path().resolve()
             # os.mkdir(os.path.join(path, f"/data/"))
-            os.makedirs(os.path.join(path, f"/../data/{username}/"))
-            print(os.path.join(path, f"/data/{username}/", file.name))
-            destination = open(os.path.join(path, f"/data/{username}/", file.name), 'w')
+
+            os.makedirs(os.path.join(f"C:User/data/{username}/"))
+            # print(os.path.join(f"C:User/data/{username}/", file.name))
+            destination = open(os.path.join(f"C:User/data/{username}/", file.name), 'wb+')
+            for chunk in file.chunks():
+                destination.write(chunk)
+            destination.close()
             newUser = UserSerializer(data={"username": username})
 
             if not newUser.is_valid():
@@ -58,15 +63,13 @@ class FileViewset(ModelViewSet):
             userInstance = User.objects.get(username=username)
             # os.mkdir(f'/data/{username}/')
             
-            for chunk in file.chunks():
-                destination.write(chunk)
-            destination.close()
-            file_path = '/data/{username}/{file.name}'
+            file_path = os.path.join(f"C:User/data/{username}/", file.name)
             data = {
                 "file_path": file_path,
-                "file_name": file_name
+                "file_name": file_name,
+                "user": userInstance.id
             }
-            serializer = FileSerializer(user=userInstance, data=data)
+            serializer = FileSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
 
